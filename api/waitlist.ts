@@ -1,17 +1,29 @@
-import { Redis } from '@upstash/redis';
+import { createClient } from '@supabase/supabase-js';
 
 export const config = { runtime: 'edge' };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// Redis.fromEnv() reads UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN,
-// which Vercel's Upstash integration injects automatically. It also falls
-// back to KV_REST_API_URL / KV_REST_API_TOKEN for legacy Vercel KV stores.
-const redis = Redis.fromEnv();
+// Vercel's Supabase integration injects SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY.
+// Service role bypasses RLS so the function can insert from the server.
+const SUPABASE_URL = process.env.SUPABASE_URL ?? '';
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
+
+const supabase =
+  SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY
+    ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+        auth: { persistSession: false },
+      })
+    : null;
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method !== 'POST') {
     return json({ error: 'Method not allowed' }, 405);
+  }
+
+  if (!supabase) {
+    console.error('Supabase env vars missing');
+    return json({ error: 'Server not configured' }, 500);
   }
 
   let body: { email?: string; name?: string; source?: string };
@@ -29,20 +41,16 @@ export default async function handler(req: Request): Promise<Response> {
     return json({ error: 'Valid email required' }, 400);
   }
 
-  try {
-    const added = await redis.sadd('waitlist:emails', email);
-    await redis.hset(`waitlist:entry:${email}`, {
-      email,
-      name,
-      source,
-      ts: Date.now(),
-    });
+  const { error } = await supabase
+    .from('waitlist')
+    .upsert({ email, name, source }, { onConflict: 'email' });
 
-    return json({ ok: true, alreadyOnList: added === 0 });
-  } catch (err) {
-    console.error('waitlist redis error', err);
+  if (error) {
+    console.error('supabase insert error', error);
     return json({ error: 'Storage error' }, 500);
   }
+
+  return json({ ok: true });
 }
 
 function json(data: unknown, status = 200): Response {

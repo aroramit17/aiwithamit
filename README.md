@@ -9,32 +9,28 @@ npm install
 npm run dev
 ```
 
-## Waitlist storage (Upstash Redis)
+## Waitlist storage (Supabase)
 
-The waitlist form posts to `/api/waitlist`, an Edge function that writes to Upstash Redis.
+`/api/waitlist` is a Vercel Edge function that upserts into a Supabase `waitlist` table.
 
-**One-time setup in the Vercel dashboard:**
+**One-time setup:**
 
-1. Open the `aiwithamit` project → **Storage** → **Create Database** → **Upstash → Redis**.
-2. Connect it to the project. Vercel will auto-inject:
-   - `UPSTASH_REDIS_REST_URL`
-   - `UPSTASH_REDIS_REST_TOKEN`
-3. Redeploy. Submissions land in Redis immediately.
+1. **Vercel dashboard** → project `aiwithamit` → **Storage** → **Create Database** → **Supabase** → create or link a Supabase project. Vercel auto-injects:
+   - `SUPABASE_URL`
+   - `SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY` (used by the Edge function)
+   - plus `POSTGRES_*` connection strings (unused here)
+2. **Supabase dashboard** → **SQL Editor** → paste the contents of `supabase/schema.sql` and run it. Creates the `public.waitlist` table with a unique email index and RLS on.
+3. **Redeploy** the Vercel project. Submissions land in the table immediately.
 
-**Data layout:**
+**View signups:** Supabase dashboard → **Table Editor** → `waitlist`.
 
-- `waitlist:emails` — Redis set of every email that has signed up (deduped).
-- `waitlist:entry:<email>` — hash with `{ email, name, source, ts }`.
+**Export via SQL:**
 
-**Export signups locally:**
-
-```bash
-vercel env pull
-node -e "import('@upstash/redis').then(async ({Redis}) => { \
-  const r = Redis.fromEnv(); \
-  const emails = await r.smembers('waitlist:emails'); \
-  for (const e of emails) console.log(JSON.stringify(await r.hgetall('waitlist:entry:'+e))); \
-})"
+```sql
+select email, name, source, created_at
+from waitlist
+order by created_at desc;
 ```
 
 ## Stack
