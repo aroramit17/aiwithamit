@@ -1,6 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { motion, useInView, useScroll, useTransform, type MotionValue } from 'framer-motion';
-import { ArrowRight, Check, X } from 'lucide-react';
+import { ArrowRight, Check } from 'lucide-react';
+
+const CHECKOUT_URL = '/waitlist';
 
 /* ------------------------------------------------------------------ */
 /* Shared animation components                                          */
@@ -101,71 +103,10 @@ function AnimatedLetter({
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* Checkout Modal (ThriveCart embed)                                    */
-/* ------------------------------------------------------------------ */
-
-const THRIVECART_SCRIPT_ID = 'tc-webpay-58-6B52AP';
-const THRIVECART_SCRIPT_SRC = '//tinder.thrivecart.com/embed/v2/thrivecart.js';
-
-function CheckoutModal({ open, onClose }: { open: boolean; onClose: () => void }) {
-  useEffect(() => {
-    if (!open) return;
-    // Lock body scroll while the checkout is open
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-
-    // Inject the ThriveCart embed script the first time the modal opens.
-    // ThriveCart looks for .tc-v2-embeddable-target elements and hydrates them.
-    if (!document.getElementById(THRIVECART_SCRIPT_ID)) {
-      const s = document.createElement('script');
-      s.async = true;
-      s.src = THRIVECART_SCRIPT_SRC;
-      s.id = THRIVECART_SCRIPT_ID;
-      document.body.appendChild(s);
-    }
-
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [open]);
-
-  if (!open) return null;
-
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/80 p-2 backdrop-blur-sm sm:p-4 sm:items-center"
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{ scale: 0.96, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-        onClick={(e) => e.stopPropagation()}
-        className="relative my-4 w-full max-w-5xl overflow-hidden rounded-2xl bg-white sm:my-8"
-      >
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/80 text-white shadow-lg transition-colors hover:bg-black"
-          aria-label="Close checkout"
-        >
-          <X className="h-4 w-4" />
-        </button>
-
-        <div className="max-h-[90vh] overflow-y-auto">
-          <div
-            className="tc-v2-embeddable-target"
-            data-thrivecart-account="webpay"
-            data-thrivecart-tpl="v2"
-            data-thrivecart-product="58"
-            data-thrivecart-embeddable="tc-webpay-58-6B52AP"
-          />
-        </div>
-      </motion.div>
-    </div>
-  );
-}
+/* Checkout flow:
+ * Every CTA is a plain anchor to /waitlist, a standalone static page
+ * (public/waitlist/index.html) that preloads the ThriveCart script in <head>.
+ * That removes the click-to-fetch delay the modal had. */
 
 /* ------------------------------------------------------------------ */
 /* Sections                                                             */
@@ -183,7 +124,7 @@ function scrollToId(id: string) {
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-function Hero({ onJoin }: { onJoin: () => void }) {
+function Hero() {
   return (
     <section id="home" className="h-screen w-full p-4 md:p-6">
       <div className="relative h-full w-full overflow-hidden rounded-2xl md:rounded-[2rem]">
@@ -202,20 +143,34 @@ function Hero({ onJoin }: { onJoin: () => void }) {
         <nav className="absolute left-1/2 top-0 z-10 -translate-x-1/2">
           <div className="flex items-center gap-3 rounded-b-2xl bg-black px-4 py-2 sm:gap-6 md:gap-12 md:rounded-b-3xl md:px-8 lg:gap-14">
             {NAV.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => {
-                  if (item.id === 'waitlist') onJoin();
-                  else scrollToId(item.id);
-                }}
-                className="text-[10px] transition-colors sm:text-xs md:text-sm"
-                style={{ color: 'rgba(225, 224, 204, 0.8)' }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = '#E1E0CC')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(225, 224, 204, 0.8)')}
-              >
-                {item.label}
-              </button>
+              item.id === 'waitlist' ? (
+                <a
+                  key={item.id}
+                  href={CHECKOUT_URL}
+                  className="text-[10px] transition-colors sm:text-xs md:text-sm"
+                  style={{ color: 'rgba(225, 224, 204, 0.8)' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = '#E1E0CC')}
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.color = 'rgba(225, 224, 204, 0.8)')
+                  }
+                >
+                  {item.label}
+                </a>
+              ) : (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => scrollToId(item.id)}
+                  className="text-[10px] transition-colors sm:text-xs md:text-sm"
+                  style={{ color: 'rgba(225, 224, 204, 0.8)' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = '#E1E0CC')}
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.color = 'rgba(225, 224, 204, 0.8)')
+                  }
+                >
+                  {item.label}
+                </button>
+              )
             ))}
           </div>
         </nav>
@@ -235,18 +190,18 @@ function Hero({ onJoin }: { onJoin: () => void }) {
               pair-programmer — no framework gymnastics, just the prompts and workflows that
               actually work.
             </motion.p>
-            <motion.button
-              onClick={onJoin}
+            <motion.a
+              href={CHECKOUT_URL}
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.7, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               className="group flex flex-shrink-0 items-center gap-2 rounded-full bg-primary py-1 pl-4 pr-1 text-xs font-medium text-black transition-all hover:gap-3 sm:py-1.5 sm:pl-5 sm:pr-1.5 sm:text-sm md:text-base"
             >
-              Join the waitlist
+              Lock in my seat
               <span className="flex h-7 w-7 items-center justify-center rounded-full bg-black transition-transform group-hover:scale-110 sm:h-9 sm:w-9 md:h-10 md:w-10">
                 <ArrowRight className="h-3 w-3 text-primary sm:h-4 sm:w-4 md:h-5 md:w-5" />
               </span>
-            </motion.button>
+            </motion.a>
           </div>
 
           {/* Full-bleed brand word */}
@@ -623,7 +578,7 @@ function Benefits() {
 /* Product showcase                                                     */
 /* ------------------------------------------------------------------ */
 
-function ProductShowcase({ onJoin }: { onJoin: () => void }) {
+function ProductShowcase() {
   const ref = useRef<HTMLDivElement | null>(null);
   const inView = useInView(ref, { once: true, margin: '-100px' });
 
@@ -656,15 +611,15 @@ function ProductShowcase({ onJoin }: { onJoin: () => void }) {
             templates. The React + Tailwind build kit. Lifetime replay access. One price, locked in
             as a Zenler AI Summit attendee.
           </p>
-          <button
-            onClick={onJoin}
-            className="group mt-8 flex items-center gap-2 rounded-full bg-primary py-1.5 pl-5 pr-1.5 text-sm font-medium text-black transition-all hover:gap-3 sm:py-2 sm:pl-6 sm:pr-2 sm:text-base"
+          <a
+            href={CHECKOUT_URL}
+            className="group mt-8 inline-flex items-center gap-2 rounded-full bg-primary py-1.5 pl-5 pr-1.5 text-sm font-medium text-black transition-all hover:gap-3 sm:py-2 sm:pl-6 sm:pr-2 sm:text-base"
           >
             Lock in my seat
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black transition-transform group-hover:scale-110 sm:h-11 sm:w-11">
               <ArrowRight className="h-4 w-4 text-primary sm:h-5 sm:w-5" />
             </span>
-          </button>
+          </a>
         </div>
       </div>
     </section>
@@ -675,7 +630,7 @@ function ProductShowcase({ onJoin }: { onJoin: () => void }) {
 /* PAPA closer (Problem · Agitate · Promise · Action) + final CTA       */
 /* ------------------------------------------------------------------ */
 
-function PapaCloser({ onJoin }: { onJoin: () => void }) {
+function PapaCloser() {
   return (
     <section className="relative bg-black px-4 py-24 sm:px-8 md:py-32">
       <div className="bg-noise pointer-events-none absolute inset-0 opacity-[0.15]" />
@@ -707,15 +662,15 @@ function PapaCloser({ onJoin }: { onJoin: () => void }) {
 
           {/* Action */}
           <div className="mt-10 flex flex-col items-center gap-3">
-            <button
-              onClick={onJoin}
-              className="group flex items-center gap-2 rounded-full bg-primary py-1.5 pl-5 pr-1.5 text-sm font-medium text-black transition-all hover:gap-3 sm:py-2 sm:pl-6 sm:pr-2 sm:text-base"
+            <a
+              href={CHECKOUT_URL}
+              className="group inline-flex items-center gap-2 rounded-full bg-primary py-1.5 pl-5 pr-1.5 text-sm font-medium text-black transition-all hover:gap-3 sm:py-2 sm:pl-6 sm:pr-2 sm:text-base"
             >
-              Join the waitlist
+              Lock in my seat
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black transition-transform group-hover:scale-110 sm:h-11 sm:w-11">
                 <ArrowRight className="h-4 w-4 text-primary sm:h-5 sm:w-5" />
               </span>
-            </button>
+            </a>
             <p className="text-[11px] text-primary/50 sm:text-xs">
               No spam. One email when seats open.
             </p>
@@ -729,21 +684,16 @@ function PapaCloser({ onJoin }: { onJoin: () => void }) {
 /* ------------------------------------------------------------------ */
 
 export default function App() {
-  const [waitlistOpen, setWaitlistOpen] = useState(false);
-  const open = () => setWaitlistOpen(true);
-  const close = () => setWaitlistOpen(false);
-
   return (
     <main className="min-h-screen bg-black">
-      <Hero onJoin={open} />
+      <Hero />
       <About />
       <ProblemAgitateSolution />
       <BeforeAfterBridge />
       <Curriculum />
       <Benefits />
-      <ProductShowcase onJoin={open} />
-      <PapaCloser onJoin={open} />
-      <CheckoutModal open={waitlistOpen} onClose={close} />
+      <ProductShowcase />
+      <PapaCloser />
     </main>
   );
 }
