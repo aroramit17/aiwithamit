@@ -620,6 +620,58 @@ function Benefits() {
 }
 
 /* ------------------------------------------------------------------ */
+/* Product showcase                                                     */
+/* ------------------------------------------------------------------ */
+
+function ProductShowcase({ onJoin }: { onJoin: () => void }) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const inView = useInView(ref, { once: true, margin: '-100px' });
+
+  return (
+    <section className="bg-black px-4 py-24 sm:px-8 md:py-32">
+      <div ref={ref} className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 md:grid-cols-2 md:gap-16">
+        <motion.div
+          initial={{ scale: 0.92, opacity: 0, rotate: -3 }}
+          animate={inView ? { scale: 1, opacity: 1, rotate: 0 } : {}}
+          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+          className="flex justify-center md:justify-start"
+        >
+          <img
+            src="/product-box.png"
+            alt="Build websites with Claude — the complete workshop"
+            className="w-full max-w-md drop-shadow-[0_25px_60px_rgba(125,90,255,0.25)]"
+            loading="lazy"
+          />
+        </motion.div>
+
+        <div>
+          <p className="mb-4 text-[10px] uppercase tracking-[0.2em] text-primary/60 sm:text-xs">
+            What you're getting
+          </p>
+          <h2 className="text-3xl font-normal leading-[1.05] text-primary sm:text-4xl md:text-5xl">
+            One complete workshop. <span className="italic font-serif">Everything you need.</span>
+          </h2>
+          <p className="mt-5 max-w-lg text-sm text-primary/70 md:text-base">
+            Six modules. The full prompt library. The copywriting playbook with PAS, BAB, and PAPA
+            templates. The React + Tailwind build kit. Lifetime replay access. One price, locked in
+            as a Zenler AI Summit attendee.
+          </p>
+          <button
+            onClick={onJoin}
+            className="group mt-8 flex items-center gap-2 rounded-full bg-primary py-1.5 pl-5 pr-1.5 text-sm font-medium text-black transition-all hover:gap-3 sm:py-2 sm:pl-6 sm:pr-2 sm:text-base"
+          >
+            Lock in my seat
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black transition-transform group-hover:scale-110 sm:h-11 sm:w-11">
+              <ArrowRight className="h-4 w-4 text-primary sm:h-5 sm:w-5" />
+            </span>
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /* PAPA closer (Problem · Agitate · Promise · Action) + final CTA       */
 /* ------------------------------------------------------------------ */
 
@@ -689,6 +741,7 @@ export default function App() {
       <BeforeAfterBridge />
       <Curriculum />
       <Benefits />
+      <ProductShowcase onJoin={open} />
       <PapaCloser onJoin={open} />
       <CheckoutModal open={waitlistOpen} onClose={close} />
     </main>
