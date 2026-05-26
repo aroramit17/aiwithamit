@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useScroll, useTransform, type MotionValue } from 'framer-motion';
 import { ArrowRight, Check, X } from 'lucide-react';
 
@@ -102,110 +102,66 @@ function AnimatedLetter({
 }
 
 /* ------------------------------------------------------------------ */
-/* Waitlist Modal                                                       */
+/* Checkout Modal (ThriveCart embed)                                    */
 /* ------------------------------------------------------------------ */
 
-const WAITLIST_ENDPOINT = '/api/waitlist';
+const THRIVECART_SCRIPT_ID = 'tc-webpay-58-6B52AP';
+const THRIVECART_SCRIPT_SRC = '//tinder.thrivecart.com/embed/v2/thrivecart.js';
 
-function WaitlistModal({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
-  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+function CheckoutModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  useEffect(() => {
+    if (!open) return;
+    // Lock body scroll while the checkout is open
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    // Inject the ThriveCart embed script the first time the modal opens.
+    // ThriveCart looks for .tc-v2-embeddable-target elements and hydrates them.
+    if (!document.getElementById(THRIVECART_SCRIPT_ID)) {
+      const s = document.createElement('script');
+      s.async = true;
+      s.src = THRIVECART_SCRIPT_SRC;
+      s.id = THRIVECART_SCRIPT_ID;
+      document.body.appendChild(s);
+    }
+
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
 
   if (!open) return null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-    setStatus('submitting');
-    try {
-      const res = await fetch(WAITLIST_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ email, name, source: 'aiwithamit-landing' }),
-      });
-      if (res.ok) {
-        setStatus('success');
-      } else {
-        setStatus('error');
-      }
-    } catch {
-      setStatus('error');
-    }
-  };
-
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/80 p-2 backdrop-blur-sm sm:p-4 sm:items-center"
       onClick={onClose}
     >
       <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
+        initial={{ scale: 0.96, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-md rounded-2xl bg-[#101010] p-8 md:p-10"
+        className="relative my-4 w-full max-w-5xl overflow-hidden rounded-2xl bg-white sm:my-8"
       >
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 text-primary/60 hover:text-primary"
-          aria-label="Close"
+          className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/80 text-white shadow-lg transition-colors hover:bg-black"
+          aria-label="Close checkout"
         >
-          <X className="h-5 w-5" />
+          <X className="h-4 w-4" />
         </button>
 
-        {status === 'success' ? (
-          <div className="text-center">
-            <h3 className="text-2xl font-medium text-primary md:text-3xl">You're in.</h3>
-            <p className="mt-3 text-sm text-primary/70">
-              Check your inbox — I'll send the first lesson when we launch.
-            </p>
-          </div>
-        ) : (
-          <>
-            <p className="text-[10px] uppercase tracking-widest text-primary sm:text-xs">
-              Waitlist
-            </p>
-            <h3 className="mt-2 text-2xl font-medium text-primary md:text-3xl">
-              Build websites with Claude.
-            </h3>
-            <p className="mt-3 text-sm text-primary/70">
-              Join the waitlist for the cohort. Early seats and conference perks go out first.
-            </p>
-
-            <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-3">
-              <input
-                type="text"
-                placeholder="Your name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="rounded-full border border-primary/20 bg-black px-5 py-3 text-sm text-primary placeholder-primary/40 outline-none focus:border-primary/50"
-              />
-              <input
-                type="email"
-                required
-                placeholder="you@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="rounded-full border border-primary/20 bg-black px-5 py-3 text-sm text-primary placeholder-primary/40 outline-none focus:border-primary/50"
-              />
-              <button
-                type="submit"
-                disabled={status === 'submitting'}
-                className="group mt-2 flex items-center justify-center gap-2 rounded-full bg-primary py-3 text-sm font-medium text-black transition-all hover:gap-3 disabled:opacity-60"
-              >
-                {status === 'submitting' ? 'Joining…' : 'Join the waitlist'}
-                <ArrowRight className="h-4 w-4" />
-              </button>
-              {status === 'error' && (
-                <p className="text-center text-xs text-red-400">
-                  Something went wrong. Email amit directly and I'll add you.
-                </p>
-              )}
-            </form>
-          </>
-        )}
+        <div className="max-h-[90vh] overflow-y-auto">
+          <div
+            className="tc-v2-embeddable-target"
+            data-thrivecart-account="webpay"
+            data-thrivecart-tpl="v2"
+            data-thrivecart-product="58"
+            data-thrivecart-embeddable="tc-webpay-58-6B52AP"
+          />
+        </div>
       </motion.div>
     </div>
   );
@@ -734,7 +690,7 @@ export default function App() {
       <Curriculum />
       <Benefits />
       <PapaCloser onJoin={open} />
-      <WaitlistModal open={waitlistOpen} onClose={close} />
+      <CheckoutModal open={waitlistOpen} onClose={close} />
     </main>
   );
 }
