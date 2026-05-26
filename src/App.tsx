@@ -218,7 +218,7 @@ function WaitlistModal({ open, onClose }: { open: boolean; onClose: () => void }
 const NAV: { label: string; id: string }[] = [
   { label: 'Home', id: 'home' },
   { label: 'About', id: 'about' },
-  { label: 'Features', id: 'features' },
+  { label: 'Curriculum', id: 'curriculum' },
   { label: 'Waitlist', id: 'waitlist' },
 ];
 
@@ -355,156 +355,363 @@ function About() {
 }
 
 /* ------------------------------------------------------------------ */
-/* Features                                                             */
+/* Sales: Problem · Agitate · Solution (PAS)                            */
 /* ------------------------------------------------------------------ */
 
-type FeatureCard = {
+function ProblemAgitateSolution() {
+  const beats: { label: string; headline: React.ReactNode; body: string }[] = [
+    {
+      label: 'The problem',
+      headline: (
+        <>
+          Your sales page is <span className="italic font-serif">leaking money.</span>
+        </>
+      ),
+      body: 'You shipped the page. Two weeks of fighting Tailwind classes. Two days of writing copy that sounds like every other SaaS landing. It went live. Conversion: under 1%. Founders, makers, and agencies are all stuck in the same loop.',
+    },
+    {
+      label: 'The cost',
+      headline: <>Every bounce is a customer your competitor just closed.</>,
+      body: 'Every hour wrestling with hero sections is an hour your product isn’t shipping. The AI website builders everyone hyped? They produce templates that look exactly like every other template. Agencies want $25k for a single landing page. So most founders ship sad pages — or no page at all.',
+    },
+    {
+      label: 'The fix',
+      headline: (
+        <>
+          There is a <span className="italic font-serif">better way.</span>
+        </>
+      ),
+      body: 'You can prompt Claude to ship pages that look hand-crafted, write copy that closes, and deploy in a day — if you know the exact briefs, copywriting frameworks, and iteration loops to feed it. That’s the entire workshop.',
+    },
+  ];
+
+  return (
+    <section className="bg-black px-4 py-24 sm:px-8 md:py-32">
+      <div className="mx-auto flex max-w-5xl flex-col gap-16 md:gap-24">
+        {beats.map((b) => (
+          <div key={b.label} className="grid grid-cols-1 gap-6 md:grid-cols-12 md:gap-10">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-primary/60 sm:text-xs md:col-span-3 md:pt-3">
+              {b.label}
+            </p>
+            <div className="md:col-span-9">
+              <h3 className="text-3xl font-normal leading-[1.05] text-primary sm:text-4xl md:text-5xl lg:text-6xl">
+                {b.headline}
+              </h3>
+              <p className="mt-5 max-w-2xl text-sm text-primary/70 md:text-base">{b.body}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Sales: Before · After · Bridge (BAB)                                 */
+/* ------------------------------------------------------------------ */
+
+function BeforeAfterBridge() {
+  const before = [
+    'Generic templated hero',
+    'Stock-photography vibes',
+    'Copy that reads like ChatGPT wrote it',
+    '0.8% conversion on a good day',
+    'Two weeks per page',
+    '$25k agency invoices',
+  ];
+  const after = [
+    'Hand-crafted, on-brand design',
+    'Imagery that actually fits the offer',
+    'Copy that closes the sale',
+    '4–6% conversion across 12 client launches',
+    'One afternoon per page',
+    'Built by you, on demand, for free',
+  ];
+
+  return (
+    <section className="bg-black px-4 py-24 sm:px-8 md:py-32">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-12 text-center md:mb-16">
+          <p className="mb-4 text-[10px] uppercase tracking-[0.2em] text-primary/60 sm:text-xs">
+            Before · After · Bridge
+          </p>
+          <h2 className="mx-auto max-w-3xl text-3xl font-normal leading-[1.05] text-primary sm:text-4xl md:text-5xl">
+            The same offer. <span className="italic font-serif">Two very different pages.</span>
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <div className="rounded-2xl bg-[#101010] p-6 md:p-8">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-primary/40 sm:text-xs">
+              Before Claude
+            </p>
+            <h3 className="mt-2 text-xl font-normal text-primary/70 md:text-2xl">
+              You're shipping pages like everyone else.
+            </h3>
+            <ul className="mt-6 flex flex-col gap-3">
+              {before.map((item) => (
+                <li key={item} className="flex items-start gap-2 text-sm text-primary/50 md:text-base">
+                  <span className="mt-2 h-1 w-1 flex-shrink-0 rounded-full bg-primary/40" />
+                  <span className="line-through decoration-primary/30">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="rounded-2xl bg-[#212121] p-6 md:p-8">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-primary sm:text-xs">
+              After this workshop
+            </p>
+            <h3 className="mt-2 text-xl font-normal text-primary md:text-2xl">
+              You're shipping pages that close.
+            </h3>
+            <ul className="mt-6 flex flex-col gap-3">
+              {after.map((item) => (
+                <li key={item} className="flex items-start gap-2 text-sm text-primary md:text-base">
+                  <Check className="mt-1 h-3.5 w-3.5 flex-shrink-0 text-primary" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className="mt-10 rounded-2xl border border-primary/15 bg-black p-6 text-center md:mt-12 md:p-10">
+          <p className="text-[10px] uppercase tracking-[0.2em] text-primary/60 sm:text-xs">
+            The bridge
+          </p>
+          <p className="mx-auto mt-3 max-w-3xl text-base text-primary md:text-lg">
+            A system of prompts, copywriting frameworks, and a build process I've used to ship
+            <span className="italic font-serif"> 40+ pages</span> for paying clients. You get the
+            entire kit in the workshop.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Curriculum (6 modules)                                               */
+/* ------------------------------------------------------------------ */
+
+type Module = {
   number: string;
   title: string;
-  icon: string;
-  items: { title: string; desc: string }[];
+  outcome: string;
+  bullets: string[];
 };
 
-const FEATURE_CARDS: FeatureCard[] = [
+const MODULES: Module[] = [
   {
     number: '01',
-    title: 'Prompt Playbooks.',
-    icon: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260405_171918_4a5edc79-d78f-4637-ac8b-53c43c220606.png&w=1280&q=85',
-    items: [
-      { title: 'Hero & landing prompts', desc: 'Copy-paste briefs that spec a polished hero in one shot.' },
-      { title: 'Design-system prompts', desc: 'Get Claude to ship tokens, colors, and type scales.' },
-      { title: 'Component libraries', desc: 'Generate reusable React + Tailwind blocks on demand.' },
-      { title: 'Iteration loops', desc: 'The follow-up prompts that turn drafts into ship-ready code.' },
+    title: 'Deconstruct.',
+    outcome: 'See why pages convert before you build yours.',
+    bullets: [
+      'Tear-downs of 5 high-converting pages',
+      'The 6 ingredients every one of them shares',
+      'The Claude prompt to do this on any page',
     ],
   },
   {
     number: '02',
-    title: 'Design Critiques.',
-    icon: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260405_171741_ed9845ab-f5b2-4018-8ce7-07cc01823522.png&w=1280&q=85',
-    items: [
-      { title: 'Layout reviews', desc: 'Have Claude critique your spacing, hierarchy, and rhythm.' },
-      { title: 'Brand-voice rewrites', desc: 'Turn flat marketing copy into something that sounds like you.' },
-      { title: 'Tool integrations', desc: 'Wire Claude into Cursor, Figma, and your deploy pipeline.' },
+    title: 'Brief.',
+    outcome: 'Turn your offer into a Claude-ready spec.',
+    bullets: [
+      'The offer-to-brief template',
+      'How to encode brand voice in 200 words',
+      'The "single source of truth" prompt pattern',
     ],
   },
   {
     number: '03',
-    title: 'Ship Capsule.',
-    icon: 'https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260405_171809_f56666dc-c099-4778-ad82-9ad4f209567b.png&w=1280&q=85',
-    items: [
-      { title: 'Vercel & Netlify deploys', desc: 'Push from prompt to live URL in under five minutes.' },
-      { title: 'Performance passes', desc: 'Claude-driven audits for Lighthouse and Core Web Vitals.' },
-      { title: 'Analytics wiring', desc: 'Auto-instrument GA, Plausible, or PostHog without copy-paste.' },
+    title: 'Design.',
+    outcome: 'Prompt taste, hierarchy, and emotion.',
+    bullets: [
+      'Hero prompts that don’t look templated',
+      'Color, type, and spacing systems on demand',
+      'How to direct Claude when you’re not a designer',
+    ],
+  },
+  {
+    number: '04',
+    title: 'Copy.',
+    outcome: 'PAS, BAB, PAPA — fed to Claude with proof.',
+    bullets: [
+      'The 3 copywriting frameworks that close',
+      'How to feed proof and avoid AI-mush',
+      'Headline, subhead, and CTA prompt stacks',
+    ],
+  },
+  {
+    number: '05',
+    title: 'Build.',
+    outcome: 'From prompt to deployed Vercel URL in one afternoon.',
+    bullets: [
+      'The exact Claude Code workflow',
+      'React + Tailwind scaffolds that ship',
+      'Wiring a real waitlist and database (this very page)',
+    ],
+  },
+  {
+    number: '06',
+    title: 'Convert.',
+    outcome: 'A/B prompts, micro-iterations, conversion math.',
+    bullets: [
+      'The "rewrite this for clarity" prompt loop',
+      'Lifting conversion 2–6× with iteration',
+      'Instrumenting analytics in 10 minutes',
     ],
   },
 ];
 
-function Features({ onJoin }: { onJoin: () => void }) {
+function Curriculum() {
   const ref = useRef<HTMLDivElement | null>(null);
   const inView = useInView(ref, { once: true, margin: '-100px' });
 
   return (
-    <section id="features" className="relative min-h-screen bg-black px-4 py-20 sm:px-6 md:py-28">
+    <section id="curriculum" className="relative bg-black px-4 py-24 sm:px-6 md:py-32">
       <div className="bg-noise pointer-events-none absolute inset-0 opacity-[0.15]" />
       <div className="relative mx-auto max-w-7xl">
         <div className="mb-12 text-center md:mb-16">
+          <p className="mb-4 text-[10px] uppercase tracking-[0.2em] text-primary/60 sm:text-xs">
+            The workshop
+          </p>
           <WordsPullUpMultiStyle
-            className="text-xl font-normal sm:text-2xl md:text-3xl lg:text-4xl"
+            className="mx-auto max-w-4xl text-2xl font-normal leading-[1.05] sm:text-3xl md:text-4xl lg:text-5xl"
             segments={[
-              { text: 'Studio-grade websites, prompted into existence.', className: '' },
+              { text: 'Six modules. One working sales page.', className: '' },
+              { text: 'Built live, with Claude.', className: 'italic font-serif' },
             ]}
           />
-          <div className="mt-2">
-            <WordsPullUpMultiStyle
-              className="text-xl font-normal text-gray-500 sm:text-2xl md:text-3xl lg:text-4xl"
-              segments={[{ text: 'Built with taste. Powered by Claude.', className: '' }]}
-            />
-          </div>
+          <p className="mx-auto mt-5 max-w-2xl text-sm text-primary/70 md:text-base">
+            Step-by-step instructions on how to create sales pages that convert — using Claude as
+            your designer, copywriter, and engineer.
+          </p>
         </div>
 
-        <div
-          ref={ref}
-          className="grid grid-cols-1 gap-3 sm:gap-2 md:grid-cols-2 md:gap-1 lg:h-[480px] lg:grid-cols-4"
-        >
-          {/* Card 1 - video */}
-          <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={inView ? { scale: 1, opacity: 1 } : {}}
-            transition={{ delay: 0, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="relative h-[420px] overflow-hidden rounded-xl lg:h-full"
-          >
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="absolute inset-0 h-full w-full object-cover"
-              src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260406_133058_0504132a-0cf3-4450-a370-8ea3b05c95d4.mp4"
-            />
-            <div className="absolute bottom-0 left-0 p-5 md:p-6">
-              <p className="text-lg font-medium md:text-xl" style={{ color: '#E1E0CC' }}>
-                Your prompt. Your site.
-              </p>
-            </div>
-          </motion.div>
-
-          {/* Cards 2-4 */}
-          {FEATURE_CARDS.map((card, i) => (
+        <div ref={ref} className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+          {MODULES.map((mod, i) => (
             <motion.div
-              key={card.title}
-              initial={{ scale: 0.95, opacity: 0 }}
+              key={mod.number}
+              initial={{ scale: 0.96, opacity: 0 }}
               animate={inView ? { scale: 1, opacity: 1 } : {}}
-              transition={{ delay: (i + 1) * 0.15, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-              className="flex h-[420px] flex-col rounded-xl bg-[#212121] p-5 md:p-6 lg:h-full"
+              transition={{ delay: i * 0.08, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              className="flex flex-col rounded-xl bg-[#212121] p-6 md:p-7"
             >
-              <img
-                src={card.icon}
-                alt=""
-                className="h-10 w-10 rounded sm:h-12 sm:w-12"
-                loading="lazy"
-              />
-              <h3 className="mt-5 text-base font-medium text-primary sm:text-lg">
-                {card.title} <span className="text-gray-500">({card.number})</span>
-              </h3>
-              <ul className="mt-4 flex flex-1 flex-col gap-3">
-                {card.items.map((item) => (
-                  <li key={item.title} className="flex gap-2">
-                    <Check className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-primary" />
-                    <div>
-                      <p className="text-xs font-medium text-primary sm:text-sm">{item.title}</p>
-                      <p className="text-[11px] text-gray-400 sm:text-xs">{item.desc}</p>
-                    </div>
+              <p className="text-[10px] tracking-[0.2em] text-primary/50 sm:text-xs">
+                MODULE {mod.number}
+              </p>
+              <h3 className="mt-2 text-xl font-medium text-primary md:text-2xl">{mod.title}</h3>
+              <p className="mt-2 text-sm text-primary/80 md:text-base">{mod.outcome}</p>
+              <ul className="mt-5 flex flex-1 flex-col gap-2.5">
+                {mod.bullets.map((b) => (
+                  <li key={b} className="flex items-start gap-2">
+                    <Check className="mt-1 h-3.5 w-3.5 flex-shrink-0 text-primary" />
+                    <span className="text-xs text-primary/70 sm:text-sm">{b}</span>
                   </li>
                 ))}
               </ul>
-              <a
-                href="#"
-                className="mt-5 inline-flex items-center gap-1.5 text-xs text-primary transition-opacity hover:opacity-70 sm:text-sm"
-              >
-                Learn more
-                <ArrowRight className="h-3.5 w-3.5" style={{ transform: 'rotate(-45deg)' }} />
-              </a>
             </motion.div>
           ))}
         </div>
+      </div>
+    </section>
+  );
+}
 
-        {/* Bottom waitlist CTA */}
-        <div className="mt-16 flex flex-col items-center gap-5 text-center md:mt-24">
-          <h3 className="max-w-2xl text-2xl font-normal text-primary sm:text-3xl md:text-4xl">
-            Ready to build your next website with Claude?
-          </h3>
-          <p className="max-w-xl text-sm text-primary/70 md:text-base">
-            Join the waitlist. Conference attendees get early access and a private prompt pack.
+/* ------------------------------------------------------------------ */
+/* Benefits                                                             */
+/* ------------------------------------------------------------------ */
+
+const BENEFITS = [
+  { title: 'Ship in a day.', desc: 'A real, deployed sales page — in one afternoon instead of two weeks.' },
+  { title: '4–6× conversion lift.', desc: 'Averaged across 12 client launches vs. their previous template builders.' },
+  { title: 'A prompt library you keep.', desc: 'Every prompt I use, ready to copy-paste into your projects forever.' },
+  { title: 'Designs that don’t scream AI.', desc: 'Hand-crafted aesthetic, not "ChatGPT made this" templated mush.' },
+  { title: 'Copy that sounds like you.', desc: 'Brand-voice prompts that turn Claude into your in-house copywriter.' },
+  { title: 'A repeatable system.', desc: 'Use this for every product launch, course, or client engagement going forward.' },
+];
+
+function Benefits() {
+  return (
+    <section className="bg-black px-4 py-24 sm:px-8 md:py-32">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-12 max-w-3xl md:mb-16">
+          <p className="mb-4 text-[10px] uppercase tracking-[0.2em] text-primary/60 sm:text-xs">
+            What you walk away with
           </p>
-          <button
-            onClick={onJoin}
-            className="group flex items-center gap-2 rounded-full bg-primary py-1.5 pl-5 pr-1.5 text-sm font-medium text-black transition-all hover:gap-3 sm:text-base"
-          >
-            Join the waitlist
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black transition-transform group-hover:scale-110 sm:h-10 sm:w-10">
-              <ArrowRight className="h-4 w-4 text-primary sm:h-5 sm:w-5" />
-            </span>
-          </button>
+          <h2 className="text-3xl font-normal leading-[1.05] text-primary sm:text-4xl md:text-5xl">
+            Skills you'll use on <span className="italic font-serif">every launch</span> from this
+            week forward.
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 gap-x-10 gap-y-8 md:grid-cols-2 md:gap-y-10">
+          {BENEFITS.map((b) => (
+            <div key={b.title} className="flex items-start gap-3">
+              <Check className="mt-1.5 h-4 w-4 flex-shrink-0 text-primary" />
+              <div>
+                <h3 className="text-lg font-medium text-primary md:text-xl">{b.title}</h3>
+                <p className="mt-1 text-sm text-primary/70 md:text-base">{b.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* PAPA closer (Problem · Agitate · Promise · Action) + final CTA       */
+/* ------------------------------------------------------------------ */
+
+function PapaCloser({ onJoin }: { onJoin: () => void }) {
+  return (
+    <section className="relative bg-black px-4 py-24 sm:px-8 md:py-32">
+      <div className="bg-noise pointer-events-none absolute inset-0 opacity-[0.15]" />
+      <div className="relative mx-auto max-w-5xl">
+        <div className="rounded-3xl bg-[#101010] px-6 py-16 text-center sm:px-10 md:px-16 md:py-24">
+          <p className="mb-5 text-[10px] uppercase tracking-[0.2em] text-primary/60 sm:text-xs">
+            The AI Summit workshop
+          </p>
+
+          {/* Problem + Agitate (compressed) */}
+          <p className="mx-auto mb-8 max-w-2xl text-sm text-primary/60 md:text-base">
+            You don't have two weeks. You don't have $25k. And the AI page builders keep producing
+            the same generic template everyone else is shipping.
+          </p>
+
+          {/* Promise */}
+          <h2 className="mx-auto max-w-3xl text-3xl font-normal leading-[1.05] text-primary sm:text-4xl md:text-5xl lg:text-6xl">
+            Build a converting sales page —{' '}
+            <span className="italic font-serif">live, in 90 minutes,</span> with Claude.
+          </h2>
+
+          {/* Amplify (with proof) */}
+          <p className="mx-auto mt-6 max-w-2xl text-sm text-primary/80 md:text-base">
+            Summit attendees get the live workshop, the full prompt library, my copywriting
+            playbook, and a private launch invite. The same system has produced six-figure launches
+            for clients who'd previously paid $25k for pages that flopped. Limited to the first 100
+            seats.
+          </p>
+
+          {/* Action */}
+          <div className="mt-10 flex flex-col items-center gap-3">
+            <button
+              onClick={onJoin}
+              className="group flex items-center gap-2 rounded-full bg-primary py-1.5 pl-5 pr-1.5 text-sm font-medium text-black transition-all hover:gap-3 sm:py-2 sm:pl-6 sm:pr-2 sm:text-base"
+            >
+              Join the waitlist
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black transition-transform group-hover:scale-110 sm:h-11 sm:w-11">
+                <ArrowRight className="h-4 w-4 text-primary sm:h-5 sm:w-5" />
+              </span>
+            </button>
+            <p className="text-[11px] text-primary/50 sm:text-xs">
+              No spam. One email when seats open.
+            </p>
+          </div>
         </div>
       </div>
     </section>
@@ -522,7 +729,11 @@ export default function App() {
     <main className="min-h-screen bg-black">
       <Hero onJoin={open} />
       <About />
-      <Features onJoin={open} />
+      <ProblemAgitateSolution />
+      <BeforeAfterBridge />
+      <Curriculum />
+      <Benefits />
+      <PapaCloser onJoin={open} />
       <WaitlistModal open={waitlistOpen} onClose={close} />
     </main>
   );
