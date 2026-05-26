@@ -1,0 +1,140 @@
+- main [ref=e3]:
+  - generic [ref=e5]:
+    - navigation [ref=e7]:
+      - generic [ref=e8]:
+        - button "Home" [ref=e9] [cursor=pointer]
+        - button "About" [ref=e10] [cursor=pointer]
+        - button "Features" [active] [ref=e11] [cursor=pointer]
+        - button "Waitlist" [ref=e12] [cursor=pointer]
+    - generic [ref=e13]:
+      - generic [ref=e14]:
+        - paragraph [ref=e15]: Learn to design and ship beautiful, production-grade websites using Claude as your pair-programmer — no framework gymnastics, just the prompts and workflows that actually work.
+        - button "Join the waitlist" [ref=e16] [cursor=pointer]:
+          - text: Join the waitlist
+          - img [ref=e18]
+      - generic [ref=e21]:
+        - text: aiwithamit
+        - generic [ref=e22]: "*"
+  - generic [ref=e24]:
+    - paragraph [ref=e25]: Build websites with Claude
+    - generic [ref=e26]:
+      - generic [ref=e27]: I
+      - generic [ref=e28]: am
+      - generic [ref=e29]: Amit,
+      - generic [ref=e30]: a
+      - generic [ref=e31]: self-taught
+      - generic [ref=e32]: builder.
+      - generic [ref=e33]: I
+      - generic [ref=e34]: teach
+      - generic [ref=e35]: engineers,
+      - generic [ref=e36]: designers,
+      - generic [ref=e37]: and
+      - generic [ref=e38]: founders
+      - generic [ref=e39]: how
+      - generic [ref=e40]: to
+      - generic [ref=e41]: ship
+      - generic [ref=e42]: stunning
+      - generic [ref=e43]: websites
+      - generic [ref=e44]: using
+      - generic [ref=e45]: Claude.
+    - paragraph [ref=e46]: Over the last several years I have shipped dozens of websites using Claude — landing pages, marketing sites, full-stack apps, and the demos I show on stage. Here I break down the prompts, the design choices, and the engineering decisions in plain English, so you can build sites that look hand-crafted in a fraction of the time.
+  - generic [ref=e48]:
+    - generic [ref=e49]:
+      - generic [ref=e50]:
+        - generic [ref=e51]: Studio-grade
+        - generic [ref=e52]: websites,
+        - generic [ref=e53]: prompted
+        - generic [ref=e54]: into
+        - generic [ref=e55]: existence.
+      - generic [ref=e57]:
+        - generic [ref=e58]: Built
+        - generic [ref=e59]: with
+        - generic [ref=e60]: taste.
+        - generic [ref=e61]: Powered
+        - generic [ref=e62]: by
+        - generic [ref=e63]: Claude.
+    - generic [ref=e64]:
+      - paragraph [ref=e68]: Your prompt. Your site.
+      - generic [ref=e69]:
+        - heading "Prompt Playbooks. (01)" [level=3] [ref=e70]:
+          - text: Prompt Playbooks.
+          - generic [ref=e71]: (01)
+        - list [ref=e72]:
+          - listitem [ref=e73]:
+            - img [ref=e74]
+            - generic [ref=e76]:
+              - paragraph [ref=e77]: Hero & landing prompts
+              - paragraph [ref=e78]: Copy-paste briefs that spec a polished hero in one shot.
+          - listitem [ref=e79]:
+            - img [ref=e80]
+            - generic [ref=e82]:
+              - paragraph [ref=e83]: Design-system prompts
+              - paragraph [ref=e84]: Get Claude to ship tokens, colors, and type scales.
+          - listitem [ref=e85]:
+            - img [ref=e86]
+            - generic [ref=e88]:
+              - paragraph [ref=e89]: Component libraries
+              - paragraph [ref=e90]: Generate reusable React + Tailwind blocks on demand.
+          - listitem [ref=e91]:
+            - img [ref=e92]
+            - generic [ref=e94]:
+              - paragraph [ref=e95]: Iteration loops
+              - paragraph [ref=e96]: The follow-up prompts that turn drafts into ship-ready code.
+        - link "Learn more" [ref=e97] [cursor=pointer]:
+          - /url: "#"
+          - text: Learn more
+          - img [ref=e98]
+      - generic [ref=e101]:
+        - heading "Design Critiques. (02)" [level=3] [ref=e102]:
+          - text: Design Critiques.
+          - generic [ref=e103]: (02)
+        - list [ref=e104]:
+          - listitem [ref=e105]:
+            - img [ref=e106]
+            - generic [ref=e108]:
+              - paragraph [ref=e109]: Layout reviews
+              - paragraph [ref=e110]: Have Claude critique your spacing, hierarchy, and rhythm.
+          - listitem [ref=e111]:
+            - img [ref=e112]
+            - generic [ref=e114]:
+              - paragraph [ref=e115]: Brand-voice rewrites
+              - paragraph [ref=e116]: Turn flat marketing copy into something that sounds like you.
+          - listitem [ref=e117]:
+            - img [ref=e118]
+            - generic [ref=e120]:
+              - paragraph [ref=e121]: Tool integrations
+              - paragraph [ref=e122]: Wire Claude into Cursor, Figma, and your deploy pipeline.
+        - link "Learn more" [ref=e123] [cursor=pointer]:
+          - /url: "#"
+          - text: Learn more
+          - img [ref=e124]
+      - generic [ref=e127]:
+        - heading "Ship Capsule. (03)" [level=3] [ref=e128]:
+          - text: Ship Capsule.
+          - generic [ref=e129]: (03)
+        - list [ref=e130]:
+          - listitem [ref=e131]:
+            - img [ref=e132]
+            - generic [ref=e134]:
+              - paragraph [ref=e135]: Vercel & Netlify deploys
+              - paragraph [ref=e136]: Push from prompt to live URL in under five minutes.
+          - listitem [ref=e137]:
+            - img [ref=e138]
+            - generic [ref=e140]:
+              - paragraph [ref=e141]: Performance passes
+              - paragraph [ref=e142]: Claude-driven audits for Lighthouse and Core Web Vitals.
+          - listitem [ref=e143]:
+            - img [ref=e144]
+            - generic [ref=e146]:
+              - paragraph [ref=e147]: Analytics wiring
+              - paragraph [ref=e148]: Auto-instrument GA, Plausible, or PostHog without copy-paste.
+        - link "Learn more" [ref=e149] [cursor=pointer]:
+          - /url: "#"
+          - text: Learn more
+          - img [ref=e150]
+    - generic [ref=e153]:
+      - heading "Ready to build your next website with Claude?" [level=3] [ref=e154]
+      - paragraph [ref=e155]: Join the waitlist. Conference attendees get early access and a private prompt pack.
+      - button "Join the waitlist" [ref=e156] [cursor=pointer]:
+        - text: Join the waitlist
+        - img [ref=e158]

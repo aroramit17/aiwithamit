@@ -265,15 +265,15 @@ function Hero({ onJoin }: { onJoin: () => void }) {
         </nav>
 
         {/* Hero content */}
-        <div className="absolute bottom-0 left-0 right-0 px-4 pb-4 sm:px-8 sm:pb-6 md:px-12 md:pb-8">
+        <div className="absolute bottom-0 left-0 right-0 px-3 pb-3 sm:px-8 sm:pb-6 md:px-12 md:pb-8">
           {/* Description + CTA sit ABOVE the giant headline so the wide word can take full width */}
-          <div className="mb-6 flex flex-col items-start gap-4 sm:mb-8 md:mb-10 md:flex-row md:items-end md:justify-end md:gap-10">
+          <div className="mb-4 flex flex-col items-start gap-3 sm:mb-8 sm:gap-4 md:mb-10 md:flex-row md:items-end md:justify-end md:gap-10">
             <motion.p
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.5, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="max-w-sm text-xs text-primary/80 sm:text-sm md:max-w-md md:text-base"
-              style={{ lineHeight: 1.3 }}
+              className="max-w-[80%] text-[11px] text-primary/80 sm:max-w-sm sm:text-sm md:max-w-md md:text-base"
+              style={{ lineHeight: 1.3, textShadow: '0 1px 8px rgba(0,0,0,0.6)' }}
             >
               Learn to design and ship beautiful, production-grade websites using Claude as your
               pair-programmer — no framework gymnastics, just the prompts and workflows that
@@ -284,11 +284,11 @@ function Hero({ onJoin }: { onJoin: () => void }) {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.7, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="group flex flex-shrink-0 items-center gap-2 rounded-full bg-primary py-1.5 pl-5 pr-1.5 text-sm font-medium text-black transition-all hover:gap-3 sm:text-base"
+              className="group flex flex-shrink-0 items-center gap-2 rounded-full bg-primary py-1 pl-4 pr-1 text-xs font-medium text-black transition-all hover:gap-3 sm:py-1.5 sm:pl-5 sm:pr-1.5 sm:text-sm md:text-base"
             >
               Join the waitlist
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black transition-transform group-hover:scale-110 sm:h-10 sm:w-10">
-                <ArrowRight className="h-4 w-4 text-primary sm:h-5 sm:w-5" />
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-black transition-transform group-hover:scale-110 sm:h-9 sm:w-9 md:h-10 md:w-10">
+                <ArrowRight className="h-3 w-3 text-primary sm:h-4 sm:w-4 md:h-5 md:w-5" />
               </span>
             </motion.button>
           </div>
@@ -297,7 +297,7 @@ function Hero({ onJoin }: { onJoin: () => void }) {
           <WordsPullUp
             text="aiwithamit"
             showAsterisk
-            className="block text-[18vw] font-medium leading-[0.85] tracking-[-0.07em] sm:text-[17vw] md:text-[16vw] lg:text-[15vw] xl:text-[14vw]"
+            className="block text-[22vw] font-medium leading-[0.85] tracking-[-0.07em] sm:text-[20vw] md:text-[16vw] lg:text-[15vw] xl:text-[14vw]"
             style={{ color: '#E1E0CC' }}
           />
         </div>
