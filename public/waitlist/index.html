@@ -97,7 +97,35 @@
         text-align: center;
         padding: 80px 24px;
         color: #6b6b6b;
-        font-size: 14px;
+        font-size: 15px;
+        min-height: 200px;
+      }
+      .loading .dots::after {
+        content: '';
+        display: inline-block;
+        width: 1.2em;
+        text-align: left;
+        animation: loading-dots 1.4s steps(4, end) infinite;
+      }
+      @keyframes loading-dots {
+        0%, 20% { content: ''; }
+        40% { content: '.'; }
+        60% { content: '..'; }
+        80%, 100% { content: '...'; }
+      }
+      .loading .verb {
+        display: inline-block;
+        font-family: 'Instrument Serif', serif;
+        font-style: italic;
+        font-weight: 400;
+        font-size: 28px;
+        color: #1a1a1a;
+        margin-top: 14px;
+        min-height: 1.2em;
+        transition: opacity 0.25s ease;
+      }
+      .loading .verb.swap {
+        opacity: 0;
       }
       @media (min-width: 640px) {
         .wrap {
@@ -126,7 +154,10 @@
       </div>
 
       <div class="checkout-shell">
-        <div id="loading-placeholder" class="loading">Loading secure checkout…</div>
+        <div id="loading-placeholder" class="loading">
+          <div>Claude is <span class="dots"></span></div>
+          <div id="verb" class="verb">Conjuring</div>
+        </div>
         <div
           class="tc-v2-embeddable-target"
           data-thrivecart-account="webpay"
@@ -138,10 +169,55 @@
     </div>
 
     <script>
-      // ThriveCart injects its checkout iframe as a sibling rather than
-      // inside the target div, so the placeholder doesn't auto-clear.
-      // Remove it as soon as we see any ThriveCart iframe appear, or after 5s.
+      // Cycle through Claude verbs while the cart hydrates — same flavour
+      // as the Claude Code spinner. The full list lives in verbs.csv.
       (function () {
+        var VERBS = [
+          'Actioning', 'Architecting', 'Baking', 'Befuddling', 'Billowing',
+          'Blanching', 'Boogieing', 'Booping', 'Brewing', 'Bunning',
+          'Burrowing', 'Canoodling', 'Cascading', 'Catapulting', 'Channeling',
+          'Clauding', 'Coalescing', 'Cogitating', 'Computing', 'Creating',
+          'Crunching', 'Crystallizing', 'Cultivating', 'Deciphering',
+          'Determining', 'Discombobulating', 'Doodling', 'Ebbing',
+          'Enchanting', 'Fiddle-faddling', 'Flambéing', 'Fluttering',
+          'Forming', 'Frolicking', 'Gallivanting', 'Galloping', 'Garnishing',
+          'Generating', 'Gitifying', 'Grooving', 'Harmonizing', 'Hatching',
+          'Hullaballooing', 'Hyperspacing', 'Ideating', 'Incubating',
+          'Infusing', 'Jitterbugging', 'Kneading', 'Leavening', 'Manifesting',
+          'Marinating', 'Metamorphosing', 'Moonwalking', 'Mustering',
+          'Nesting', 'Newspapering', 'Nucleating', 'Perambulating', 'Perusing',
+          'Pondering', 'Pouncing', 'Prestidigitating', 'Propagating',
+          'Puttering', 'Razzle-dazzling', 'Roosting', 'Seasoning',
+          'Shenaniganing', 'Shimmying', 'Simmering', 'Skedaddling',
+          'Sketching', 'Smooshing', 'Spelunking', 'Sprouting', 'Sublimating',
+          'Swirling', 'Swooping', 'Thinking', 'Thundering', 'Tinkering',
+          'Transmuting', 'Unfurling', 'Vibing', 'Waddling', 'Wandering',
+          'Warping', 'Whirlpooling', 'Wibbling', 'Working'
+        ];
+
+        var verbEl = document.getElementById('verb');
+        var verbInterval = null;
+        if (verbEl) {
+          // Shuffle so each visit feels fresh
+          for (var i = VERBS.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var tmp = VERBS[i]; VERBS[i] = VERBS[j]; VERBS[j] = tmp;
+          }
+          var idx = 0;
+          verbEl.textContent = VERBS[idx];
+          verbInterval = setInterval(function () {
+            verbEl.classList.add('swap');
+            setTimeout(function () {
+              idx = (idx + 1) % VERBS.length;
+              verbEl.textContent = VERBS[idx];
+              verbEl.classList.remove('swap');
+            }, 250);
+          }, 900);
+        }
+
+        // ThriveCart injects its checkout iframe as a sibling rather than
+        // inside the target div, so the placeholder doesn't auto-clear.
+        // Remove it as soon as we see any ThriveCart iframe appear, or after 5s.
         var placeholder = document.getElementById('loading-placeholder');
         if (!placeholder) return;
         function hasCheckoutIframe() {
@@ -150,23 +226,18 @@
           );
         }
         function remove() {
+          if (verbInterval) clearInterval(verbInterval);
           if (placeholder && placeholder.parentNode) placeholder.parentNode.removeChild(placeholder);
         }
-        if (hasCheckoutIframe()) {
-          remove();
-          return;
-        }
+        if (hasCheckoutIframe()) { remove(); return; }
         var observer = new MutationObserver(function () {
-          if (hasCheckoutIframe()) {
-            remove();
-            observer.disconnect();
-          }
+          if (hasCheckoutIframe()) { remove(); observer.disconnect(); }
         });
         observer.observe(document.body, { childList: true, subtree: true });
         setTimeout(function () {
           remove();
           observer.disconnect();
-        }, 5000);
+        }, 8000);
       })();
     </script>
   </body>
