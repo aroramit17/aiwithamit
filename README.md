@@ -1,73 +1,47 @@
-# React + TypeScript + Vite
+# aiwithamit
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Landing page for the **Build websites with Claude** cohort. Vite + React + TypeScript + Tailwind + framer-motion, with a Vercel Edge function backed by Vercel KV for the waitlist.
 
-Currently, two official plugins are available:
+## Local dev
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Waitlist storage (Vercel KV)
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+The waitlist form posts to `/api/waitlist`, which writes to a Vercel KV store.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+**One-time setup in the Vercel dashboard:**
+
+1. Open the `aiwithamit` project → **Storage** → **Create Database** → **KV**.
+2. Connect the new store to the project. Vercel will auto-inject these env vars:
+   - `KV_REST_API_URL`
+   - `KV_REST_API_TOKEN`
+   - `KV_REST_API_READ_ONLY_TOKEN`
+   - `KV_URL`
+3. Redeploy. That's it — submissions land in the store immediately.
+
+**Data layout:**
+
+- `waitlist:emails` — a Redis set of every email that has signed up.
+- `waitlist:entry:<email>` — a hash with `{ email, name, source, ts }`.
+
+**Export signups (from the Vercel CLI):**
+
+```bash
+vercel env pull
+node -e "import('@vercel/kv').then(async ({kv}) => { \
+  const emails = await kv.smembers('waitlist:emails'); \
+  for (const e of emails) console.log(JSON.stringify(await kv.hgetall('waitlist:entry:'+e))); \
+})"
 ```
+
+## Stack
+
+- Vite + React 18 + TypeScript
+- Tailwind CSS 3
+- framer-motion (pull-up text, scroll-linked reveals, card entrances)
+- lucide-react (icons)
+- `@vercel/kv` (waitlist storage, Edge runtime)

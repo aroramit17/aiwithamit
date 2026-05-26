@@ -105,9 +105,7 @@ function AnimatedLetter({
 /* Waitlist Modal                                                       */
 /* ------------------------------------------------------------------ */
 
-// Replace this with your Formspree (or other email-capture) endpoint.
-// e.g. 'https://formspree.io/f/abcd1234'
-const WAITLIST_ENDPOINT = 'https://formspree.io/f/your-id-here';
+const WAITLIST_ENDPOINT = '/api/waitlist';
 
 function WaitlistModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [email, setEmail] = useState('');
@@ -217,11 +215,21 @@ function WaitlistModal({ open, onClose }: { open: boolean; onClose: () => void }
 /* Sections                                                             */
 /* ------------------------------------------------------------------ */
 
-const NAV = ['Curriculum', 'Demos', 'Workshops', 'Speaking', 'Contact'];
+const NAV: { label: string; id: string }[] = [
+  { label: 'Home', id: 'home' },
+  { label: 'About', id: 'about' },
+  { label: 'Features', id: 'features' },
+  { label: 'Waitlist', id: 'waitlist' },
+];
+
+function scrollToId(id: string) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
 function Hero({ onJoin }: { onJoin: () => void }) {
   return (
-    <section className="h-screen w-full p-4 md:p-6">
+    <section id="home" className="h-screen w-full p-4 md:p-6">
       <div className="relative h-full w-full overflow-hidden rounded-2xl md:rounded-[2rem]">
         <video
           autoPlay
@@ -238,57 +246,60 @@ function Hero({ onJoin }: { onJoin: () => void }) {
         <nav className="absolute left-1/2 top-0 z-10 -translate-x-1/2">
           <div className="flex items-center gap-3 rounded-b-2xl bg-black px-4 py-2 sm:gap-6 md:gap-12 md:rounded-b-3xl md:px-8 lg:gap-14">
             {NAV.map((item) => (
-              <a
-                key={item}
-                href="#"
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => {
+                  if (item.id === 'waitlist') onJoin();
+                  else scrollToId(item.id);
+                }}
                 className="text-[10px] transition-colors sm:text-xs md:text-sm"
                 style={{ color: 'rgba(225, 224, 204, 0.8)' }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = '#E1E0CC')}
                 onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(225, 224, 204, 0.8)')}
               >
-                {item}
-              </a>
+                {item.label}
+              </button>
             ))}
           </div>
         </nav>
 
         {/* Hero content */}
-        <div className="absolute bottom-0 left-0 right-0 px-4 pb-6 sm:px-8 sm:pb-8 md:px-12 md:pb-10">
-          <div className="grid grid-cols-1 items-end gap-6 md:grid-cols-12">
-            <div className="md:col-span-8">
-              <WordsPullUp
-                text="aiwithamit"
-                showAsterisk
-                className="text-[26vw] font-medium leading-[0.85] tracking-[-0.07em] sm:text-[24vw] md:text-[22vw] lg:text-[20vw] xl:text-[19vw] 2xl:text-[20vw]"
-                style={{ color: '#E1E0CC' }}
-              />
-            </div>
-            <div className="flex flex-col gap-5 md:col-span-4 md:items-start">
-              <motion.p
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.5, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="text-xs text-primary/70 sm:text-sm md:text-base"
-                style={{ lineHeight: 1.2 }}
-              >
-                Learn to design and ship beautiful, production-grade websites using Claude as your
-                pair-programmer — no framework gymnastics, no boilerplate, just the prompts and
-                workflows that actually work.
-              </motion.p>
-              <motion.button
-                onClick={onJoin}
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.7, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="group flex items-center gap-2 rounded-full bg-primary py-1.5 pl-5 pr-1.5 text-sm font-medium text-black transition-all hover:gap-3 sm:text-base"
-              >
-                Join the waitlist
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black transition-transform group-hover:scale-110 sm:h-10 sm:w-10">
-                  <ArrowRight className="h-4 w-4 text-primary sm:h-5 sm:w-5" />
-                </span>
-              </motion.button>
-            </div>
+        <div className="absolute bottom-0 left-0 right-0 px-4 pb-4 sm:px-8 sm:pb-6 md:px-12 md:pb-8">
+          {/* Description + CTA sit ABOVE the giant headline so the wide word can take full width */}
+          <div className="mb-6 flex flex-col items-start gap-4 sm:mb-8 md:mb-10 md:flex-row md:items-end md:justify-end md:gap-10">
+            <motion.p
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.5, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              className="max-w-sm text-xs text-primary/80 sm:text-sm md:max-w-md md:text-base"
+              style={{ lineHeight: 1.3 }}
+            >
+              Learn to design and ship beautiful, production-grade websites using Claude as your
+              pair-programmer — no framework gymnastics, just the prompts and workflows that
+              actually work.
+            </motion.p>
+            <motion.button
+              onClick={onJoin}
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.7, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              className="group flex flex-shrink-0 items-center gap-2 rounded-full bg-primary py-1.5 pl-5 pr-1.5 text-sm font-medium text-black transition-all hover:gap-3 sm:text-base"
+            >
+              Join the waitlist
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black transition-transform group-hover:scale-110 sm:h-10 sm:w-10">
+                <ArrowRight className="h-4 w-4 text-primary sm:h-5 sm:w-5" />
+              </span>
+            </motion.button>
           </div>
+
+          {/* Full-bleed brand word */}
+          <WordsPullUp
+            text="aiwithamit"
+            showAsterisk
+            className="block text-[18vw] font-medium leading-[0.85] tracking-[-0.07em] sm:text-[17vw] md:text-[16vw] lg:text-[15vw] xl:text-[14vw]"
+            style={{ color: '#E1E0CC' }}
+          />
         </div>
       </div>
     </section>
@@ -307,7 +318,7 @@ function About() {
   const chars = bodyText.split('');
 
   return (
-    <section className="bg-black px-4 py-24 sm:px-8 md:py-32">
+    <section id="about" className="bg-black px-4 py-24 sm:px-8 md:py-32">
       <div className="mx-auto max-w-6xl rounded-2xl bg-[#101010] px-6 py-16 text-center sm:px-10 md:py-24">
         <p className="mb-6 text-[10px] text-primary sm:text-xs">Build websites with Claude</p>
 
@@ -393,7 +404,7 @@ function Features({ onJoin }: { onJoin: () => void }) {
   const inView = useInView(ref, { once: true, margin: '-100px' });
 
   return (
-    <section className="relative min-h-screen bg-black px-4 py-20 sm:px-6 md:py-28">
+    <section id="features" className="relative min-h-screen bg-black px-4 py-20 sm:px-6 md:py-28">
       <div className="bg-noise pointer-events-none absolute inset-0 opacity-[0.15]" />
       <div className="relative mx-auto max-w-7xl">
         <div className="mb-12 text-center md:mb-16">
