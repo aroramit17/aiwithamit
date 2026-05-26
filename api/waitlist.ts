@@ -1,8 +1,13 @@
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
 
 export const config = { runtime: 'edge' };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Redis.fromEnv() reads UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN,
+// which Vercel's Upstash integration injects automatically. It also falls
+// back to KV_REST_API_URL / KV_REST_API_TOKEN for legacy Vercel KV stores.
+const redis = Redis.fromEnv();
 
 export default async function handler(req: Request): Promise<Response> {
   if (req.method !== 'POST') {
@@ -25,8 +30,8 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   try {
-    const added = await kv.sadd('waitlist:emails', email);
-    await kv.hset(`waitlist:entry:${email}`, {
+    const added = await redis.sadd('waitlist:emails', email);
+    await redis.hset(`waitlist:entry:${email}`, {
       email,
       name,
       source,
@@ -35,7 +40,7 @@ export default async function handler(req: Request): Promise<Response> {
 
     return json({ ok: true, alreadyOnList: added === 0 });
   } catch (err) {
-    console.error('waitlist KV error', err);
+    console.error('waitlist redis error', err);
     return json({ error: 'Storage error' }, 500);
   }
 }

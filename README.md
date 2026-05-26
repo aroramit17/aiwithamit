@@ -9,32 +9,31 @@ npm install
 npm run dev
 ```
 
-## Waitlist storage (Vercel KV)
+## Waitlist storage (Upstash Redis)
 
-The waitlist form posts to `/api/waitlist`, which writes to a Vercel KV store.
+The waitlist form posts to `/api/waitlist`, an Edge function that writes to Upstash Redis.
 
 **One-time setup in the Vercel dashboard:**
 
-1. Open the `aiwithamit` project → **Storage** → **Create Database** → **KV**.
-2. Connect the new store to the project. Vercel will auto-inject these env vars:
-   - `KV_REST_API_URL`
-   - `KV_REST_API_TOKEN`
-   - `KV_REST_API_READ_ONLY_TOKEN`
-   - `KV_URL`
-3. Redeploy. That's it — submissions land in the store immediately.
+1. Open the `aiwithamit` project → **Storage** → **Create Database** → **Upstash → Redis**.
+2. Connect it to the project. Vercel will auto-inject:
+   - `UPSTASH_REDIS_REST_URL`
+   - `UPSTASH_REDIS_REST_TOKEN`
+3. Redeploy. Submissions land in Redis immediately.
 
 **Data layout:**
 
-- `waitlist:emails` — a Redis set of every email that has signed up.
-- `waitlist:entry:<email>` — a hash with `{ email, name, source, ts }`.
+- `waitlist:emails` — Redis set of every email that has signed up (deduped).
+- `waitlist:entry:<email>` — hash with `{ email, name, source, ts }`.
 
-**Export signups (from the Vercel CLI):**
+**Export signups locally:**
 
 ```bash
 vercel env pull
-node -e "import('@vercel/kv').then(async ({kv}) => { \
-  const emails = await kv.smembers('waitlist:emails'); \
-  for (const e of emails) console.log(JSON.stringify(await kv.hgetall('waitlist:entry:'+e))); \
+node -e "import('@upstash/redis').then(async ({Redis}) => { \
+  const r = Redis.fromEnv(); \
+  const emails = await r.smembers('waitlist:emails'); \
+  for (const e of emails) console.log(JSON.stringify(await r.hgetall('waitlist:entry:'+e))); \
 })"
 ```
 
