@@ -1,6 +1,6 @@
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useScroll, useTransform, type MotionValue } from 'framer-motion';
-import { ArrowRight, Check } from 'lucide-react';
+import { ArrowRight, ArrowUp, Check, Moon, Sun } from 'lucide-react';
 
 const CHECKOUT_URL = '/waitlist';
 
@@ -269,6 +269,38 @@ function About() {
 /* Sales: Problem · Agitate · Solution (PAS)                            */
 /* ------------------------------------------------------------------ */
 
+function Beat({
+  label,
+  headline,
+  body,
+}: {
+  label: string;
+  headline: React.ReactNode;
+  body: string;
+}) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const inView = useInView(ref, { once: true, margin: '-15%' });
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, x: -60 }}
+      animate={inView ? { opacity: 1, x: 0 } : {}}
+      transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+      className="grid grid-cols-1 gap-6 md:grid-cols-12 md:gap-10"
+    >
+      <p className="text-[10px] uppercase tracking-[0.2em] text-primary/60 sm:text-xs md:col-span-3 md:pt-3">
+        {label}
+      </p>
+      <div className="md:col-span-9">
+        <h3 className="text-3xl font-normal leading-[1.05] text-primary sm:text-4xl md:text-5xl lg:text-6xl">
+          {headline}
+        </h3>
+        <p className="mt-5 max-w-2xl text-sm text-primary/70 md:text-base">{body}</p>
+      </div>
+    </motion.div>
+  );
+}
+
 function ProblemAgitateSolution() {
   const beats: { label: string; headline: React.ReactNode; body: string }[] = [
     {
@@ -300,17 +332,7 @@ function ProblemAgitateSolution() {
     <section className="bg-black px-4 py-24 sm:px-8 md:py-32">
       <div className="mx-auto flex max-w-5xl flex-col gap-16 md:gap-24">
         {beats.map((b) => (
-          <div key={b.label} className="grid grid-cols-1 gap-6 md:grid-cols-12 md:gap-10">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-primary/60 sm:text-xs md:col-span-3 md:pt-3">
-              {b.label}
-            </p>
-            <div className="md:col-span-9">
-              <h3 className="text-3xl font-normal leading-[1.05] text-primary sm:text-4xl md:text-5xl lg:text-6xl">
-                {b.headline}
-              </h3>
-              <p className="mt-5 max-w-2xl text-sm text-primary/70 md:text-base">{b.body}</p>
-            </div>
-          </div>
+          <Beat key={b.label} {...b} />
         ))}
       </div>
     </section>
@@ -683,9 +705,128 @@ function PapaCloser() {
 
 /* ------------------------------------------------------------------ */
 
+/* ------------------------------------------------------------------ */
+/* Mouse stardust trail                                                 */
+/* ------------------------------------------------------------------ */
+
+function MouseTrail() {
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (window.matchMedia('(pointer: coarse)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const container = document.createElement('div');
+    container.id = 'mouse-trail-container';
+    container.style.cssText =
+      'position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;';
+    document.body.appendChild(container);
+
+    let last = 0;
+    const THROTTLE = 18;
+    const PALETTE = ['#fff8d0', '#DEDBC8', '#f7cf6f', '#ffe9a8'];
+
+    function onMove(e: MouseEvent) {
+      const now = performance.now();
+      if (now - last < THROTTLE) return;
+      last = now;
+
+      const p = document.createElement('div');
+      const size = 3 + Math.random() * 5;
+      const dx = (Math.random() - 0.5) * 36;
+      const dy = 18 + Math.random() * 36;
+      const color = PALETTE[Math.floor(Math.random() * PALETTE.length)];
+      const duration = 700 + Math.random() * 500;
+
+      p.className = 'trail-particle';
+      p.style.cssText =
+        `left:${e.clientX}px;top:${e.clientY}px;` +
+        `width:${size}px;height:${size}px;` +
+        `margin-left:${-size / 2}px;margin-top:${-size / 2}px;` +
+        `background:radial-gradient(circle, ${color} 0%, ${color} 30%, transparent 70%);` +
+        `box-shadow:0 0 8px ${color};` +
+        `animation-duration:${duration}ms;` +
+        `--dx:${dx}px;--dy:${dy}px;`;
+      container.appendChild(p);
+      p.addEventListener('animationend', () => p.remove(), { once: true });
+    }
+
+    window.addEventListener('mousemove', onMove, { passive: true });
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      container.remove();
+    };
+  }, []);
+  return null;
+}
+
+/* ------------------------------------------------------------------ */
+/* Footer (theme toggle + back-to-top + legal links)                    */
+/* ------------------------------------------------------------------ */
+
+function Footer() {
+  const [isLight, setIsLight] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('theme');
+    if (stored === 'light') {
+      document.documentElement.classList.add('light');
+      setIsLight(true);
+    }
+  }, []);
+
+  function toggleTheme() {
+    const next = !isLight;
+    setIsLight(next);
+    document.documentElement.classList.toggle('light', next);
+    localStorage.setItem('theme', next ? 'light' : 'dark');
+  }
+
+  function backToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  return (
+    <footer className="border-t border-primary/10 bg-black px-4 py-10 sm:px-8">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 md:flex-row">
+        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-primary/60">
+          <span>© {new Date().getFullYear()} aiwithamit</span>
+          <a href="/privacy" className="transition-colors hover:text-primary">
+            Privacy Policy
+          </a>
+          <a href="/terms" className="transition-colors hover:text-primary">
+            Terms of Service
+          </a>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-primary/20 text-primary transition-colors hover:bg-primary/10"
+            aria-label={isLight ? 'Switch to dark mode' : 'Switch to light mode'}
+          >
+            {isLight ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+          </button>
+          <button
+            type="button"
+            onClick={backToTop}
+            className="group flex items-center gap-2 rounded-full border border-primary/20 px-4 py-2 text-xs text-primary transition-colors hover:bg-primary/10"
+          >
+            <ArrowUp className="h-3 w-3 transition-transform group-hover:-translate-y-0.5" />
+            Back to top
+          </button>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+
 export default function App() {
   return (
     <main className="min-h-screen bg-black">
+      <MouseTrail />
       <Hero />
       <About />
       <ProblemAgitateSolution />
@@ -694,6 +835,7 @@ export default function App() {
       <Benefits />
       <ProductShowcase />
       <PapaCloser />
+      <Footer />
     </main>
   );
 }
